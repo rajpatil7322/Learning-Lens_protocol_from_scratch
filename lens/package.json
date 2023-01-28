@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.4.9",
     "@next/font": "13.1.6",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@urql/exchange-auth": "^1.0.0",
@@ -19,6 +20,7 @@
     "next": "13.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "urql": "^3.0.3"
+    "urql": "^3.0.3",
+    "wagmi": "^0.11.0"
   }
 }

@@ -7,82 +7,101 @@ import {getChallenge} from './api/queries'
 import {authenticate,createPostTypedData} from './api/mutations'
 import {ethers,Wallet } from "ethers"
 import abi from './api/abi.json';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from "wagmi"
+import { useState,useEffect } from 'react'
+import { Box, Button, Flex, Heading, Input, Spinner } from "@chakra-ui/react"
 
 const inter = Inter({ subsets: ['latin'] })
 
-async function getData(){
-  const API="https://api-mumbai.lens.dev"
-  const urqlClient = createClient({
-    url:API
-  })
-  const result=await urqlClient.query(getChallenge,{address:'0x11E2f924c2C0aB9eb4d62dAf027A71A96c4fCB1C'}).toPromise();
-  // console.log(result.data.challenge.text);
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  const signer=new Wallet("c0b63ba5bb295cc00cfb5f15415756d63a77c2d1d5aa93e4b1011ede6706dabc", provider);
-  const account='0x11E2f924c2C0aB9eb4d62dAf027A71A96c4fCB1C'
-  const signature = await signer.signMessage(result.data.challenge.text)
-  // console.log(signature)
-  const auth_data=await urqlClient.mutation(authenticate,{ address: account, signature}).toPromise();
-  // console.log(auth_data.data.authenticate.accessToken);
-  const auth_client= createClient({
-    url:API,
-    fetchOptions: {
-      headers: {
-        'x-access-token': `Bearer ${auth_data.data.authenticate.accessToken}`
-      },
-    },
-  })
-  const contentURI="jnALnsSSs"
-  const id=ethers.utils.hexZeroPad(ethers.utils.hexlify(25296))
-  const request = {
-    profileId: id,
-    contentURI,
-    collectModule: {
-      freeCollectModule: { followerOnly: true }
-    },
-    referenceModule: {
-      followerOnlyReferenceModule: false
-    },
-  }
-  const post = await auth_client.mutation(createPostTypedData, {
-    request
-  }).toPromise()
-  console.log("Success!!!");
-  return post.data.createPostTypedData.typedData.value;
-}
-
-async function post(){
-  const data=await getData();
-  console.log("ProfileId:",data.profileId);
-  console.log("ConetentURI:",data.contentURI);
-  console.log("CollectModule_address:",data.collectModule);
-  console.log("CollectInitData:",data.collectModuleInitData)
-  console.log("RefrenceModuel_address:",data.referenceModule)
-  console.log("RefrencemoduleINitdata:",data.referenceModuleInitData)
-  // const provider = new ethers.providers.Web3Provider(window.ethereum)
-  // const signer=new Wallet("c0b63ba5bb295cc00cfb5f15415756d63a77c2d1d5aa93e4b1011ede6706dabc", provider);
-  const account='0x11E2f924c2C0aB9eb4d62dAf027A71A96c4fCB1C'
-  const proxy_address="0x60Ae865ee4C725cd04353b5AAb364553f56ceF82"
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  await provider.send("eth_requestAccounts", []);
-  const signer = provider.getSigner()
-  const LensContract = new ethers.Contract(proxy_address, abi, signer);
-  const post_data={
-    profileId:data.profileId,
-    contentURI:data.contentURI,
-    collectModule:data.collectModule,
-    collectModuleInitData:data.collectModuleInitData,
-    referenceModule:data.referenceModule,
-    referenceModuleInitData:data.referenceModuleInitData
-  }
-  const tx=await LensContract.post(post_data);
-  console.log(tx);
-
-}
 
 
 
 export default function Home() {
+
+  const { address } = useAccount();
+  const[provider,setProvider]=useState();
+  const[signer,setSigner]=useState();
+
+  async function Connect(){
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    setSigner(signer);
+    setProvider(provider);
+  }
+
+  useEffect(() => {
+    Connect();
+  }, [])
+  
+  async function getData(){
+    const API="https://api-mumbai.lens.dev"
+    const urqlClient = createClient({
+      url:API
+    })
+    const result=await urqlClient.query(getChallenge,{address:address}).toPromise();
+
+    const signature = await signer.signMessage(result.data.challenge.text)
+   
+    const auth_data=await urqlClient.mutation(authenticate,{ address: address, signature}).toPromise();
+ 
+    const auth_client= createClient({
+      url:API,
+      fetchOptions: {
+        headers: {
+          'x-access-token': `Bearer ${auth_data.data.authenticate.accessToken}`
+        },
+      },
+    })
+
+    const contentURI="Raj"
+    const id=ethers.utils.hexZeroPad(ethers.utils.hexlify(25296))
+    const request = {
+      profileId: id,
+      contentURI,
+      collectModule: {
+        freeCollectModule: { followerOnly: true }
+      },
+      referenceModule: {
+        followerOnlyReferenceModule: false
+      },
+    }
+    const post = await auth_client.mutation(createPostTypedData, {
+      request
+    }).toPromise()
+    console.log("Success!!!");
+    return post.data.createPostTypedData.typedData.value;
+  }
+  
+  async function post(){
+    const data=await getData();
+    console.log("ProfileId:",data.profileId);
+    console.log("ConetentURI:",data.contentURI);
+    console.log("CollectModule_address:",data.collectModule);
+    console.log("CollectInitData:",data.collectModuleInitData)
+    console.log("RefrenceModuel_address:",data.referenceModule)
+    console.log("RefrencemoduleINitdata:",data.referenceModuleInitData)
+  
+   
+    const proxy_address="0x60Ae865ee4C725cd04353b5AAb364553f56ceF82"
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // await provider.send("eth_requestAccounts", []);
+    // const signer = provider.getSigner()
+    const LensContract = new ethers.Contract(proxy_address, abi, signer);
+
+    const post_data={
+      profileId:data.profileId,
+      contentURI:data.contentURI,
+      collectModule:data.collectModule,
+      collectModuleInitData:data.collectModuleInitData,
+      referenceModule:data.referenceModule,
+      referenceModuleInitData:data.referenceModuleInitData
+    }
+    const tx=await LensContract.post(post_data);
+    console.log(tx);
+  
+  }
+  
   return (
     <>
       <Head>
@@ -93,8 +112,8 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <h1>Hello</h1>
-        <button onClick={() =>getData()}>Click</button>
-        <button onClick={() =>post()}>POST</button>
+        <Button onClick={() =>post()}>POST</Button>
+        <ConnectButton/>
       </main>
     </>
   )
