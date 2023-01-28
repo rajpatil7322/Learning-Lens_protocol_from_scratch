@@ -1,0 +1,24 @@
+{
+  "name": "lens",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@next/font": "13.1.6",
+    "@rainbow-me/rainbowkit": "^0.8.1",
+    "@urql/exchange-auth": "^1.0.0",
+    "eslint": "8.32.0",
+    "eslint-config-next": "13.1.6",
+    "ethers": "^5.7.2",
+    "graphql": "^16.6.0",
+    "next": "13.1.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "urql": "^3.0.3"
+  }
+}
