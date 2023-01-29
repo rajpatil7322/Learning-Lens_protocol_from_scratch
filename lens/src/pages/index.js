@@ -11,7 +11,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from "wagmi"
 import { useState,useEffect } from 'react'
 import { Box, Button, Flex, Heading, Input, Spinner } from "@chakra-ui/react"
-import { create } from "ipfs-http-client";
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +24,8 @@ export default function Home() {
   const[provider,setProvider]=useState();
   const[signer,setSigner]=useState();
   const[image,setImage]=useState();
+  
+  
 
   async function Connect(){
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -35,6 +37,8 @@ export default function Home() {
   useEffect(() => {
     Connect();
   }, [])
+
+
   
   async function getData(){
     const API="https://api-mumbai.lens.dev"
@@ -58,11 +62,9 @@ export default function Home() {
 
  
     const profile=await auth_client.query(getDefaultProfile,{address:address}).toPromise();
-  
+
  
-    console.log(image);
- 
-    const contentURI="Raj"
+    const contentURI=image
     // const id=ethers.utils.hexZeroPad(ethers.utils.hexlify(25296))
     const request = {
       profileId: profile.data.defaultProfile.id,
@@ -115,11 +117,11 @@ export default function Home() {
     <ConnectButton/>
     <Input
       color='tomato'
-      placeholder="Upload Image"
+      placeholder="Enter IPFS URI"
       size="xs"
-      type="image"
+      type="text"
+      onChange={(e)=>setImage(e.target.value)}
       />
-    <Button onClick={() =>getData()}>Image</Button>
     <br/>
 
     <div>
