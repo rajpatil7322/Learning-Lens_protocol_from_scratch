@@ -107,10 +107,13 @@ export default function Home() {
       referenceModule:data.referenceModule,
       referenceModuleInitData:data.referenceModuleInitData
     }
+    console.log(post_data)
     const tx=await LensContract.post(post_data);
     console.log(tx);
+   
   
-  }
+  }//0x0BE6bD7092ee83D44a6eC1D949626FeE48caB30c //0x62d0
+  //0x0BE6bD7092ee83D44a6eC1D949626FeE48caB30c //0x6369
   
   return (
    <div>
