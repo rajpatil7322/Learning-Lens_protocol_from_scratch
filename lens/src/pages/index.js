@@ -23,7 +23,7 @@ export default function Home() {
   const { address } = useAccount();
   const[provider,setProvider]=useState();
   const[signer,setSigner]=useState();
-  const[image,setImage]=useState();
+  const[text,setText]=useState();
   
   
 
@@ -64,7 +64,7 @@ export default function Home() {
     const profile=await auth_client.query(getDefaultProfile,{address:address}).toPromise();
 
  
-    const contentURI=image
+    const contentURI=text
     // const id=ethers.utils.hexZeroPad(ethers.utils.hexlify(25296))
     const request = {
       profileId: profile.data.defaultProfile.id,
@@ -123,7 +123,7 @@ export default function Home() {
       placeholder="Enter IPFS URI"
       size="xs"
       type="text"
-      onChange={(e)=>setImage(e.target.value)}
+      onChange={(e)=>setText(e.target.value)}
       />
     <br/>
 
