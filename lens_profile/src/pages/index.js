@@ -13,16 +13,24 @@ import {
   FormHelperText,
   Box, Button,Input,Lin 
 } from '@chakra-ui/react'
+import * as IPFS from 'ipfs-core' 
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const [handle, sethandle] = useState("")
   const [image, setimage] = useState("")
+  
 
   const { address } = useAccount()
   console.log(handle);
   console.log(image);
+
+  async function uploadToIpfs(){
+    const ipfs = await IPFS.create();
+    const res= await ipfs.add("file")   
+    console.log(res.path)
+  }
 
   async function createProfile(){
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -62,13 +70,13 @@ export default function Home() {
       </br>
       <FormControl>
         <FormLabel>Enter Profile image IPFS URI</FormLabel>
-        <Input type='text' width='auto' onChange={(e) =>setimage(e.target.value)} />
+        <Input type='file' width='auto' onChange={(e) =>setimage(e.target.value)} />
         <FormHelperText>Enter IPFS URI</FormHelperText>
       </FormControl>
      <br>
      </br>
       <div>
-      <Button onClick={() =>createProfile()}>CreateProfile</Button>
+      <Button onClick={() =>createProfile()}>CreateProfile</Button>      
       </div>
       <br>
       </br>
