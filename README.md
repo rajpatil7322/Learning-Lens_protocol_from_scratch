@@ -1,1 +1,1 @@
-# Lens_authentication
+# Learning Lens Protocol
